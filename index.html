@@ -1283,7 +1283,7 @@
         </svg>
       </button>
 
-      <ul class="nav-links" id="navLinks" aria-hidden="true">
+      <ul class="nav-links" id="navLinks">
         <li><a href="#home">Home</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#skills">Skills</a></li>
@@ -1912,7 +1912,6 @@
       function closeMenu({ restoreFocus = false } = {}) {
         const wasOpen = menuToggle.getAttribute("aria-expanded") === "true";
         navLinks.classList.remove("open");
-        navLinks.setAttribute("aria-hidden", "true");
         menuToggle.setAttribute("aria-expanded", "false");
         menuToggle.setAttribute("aria-label", "Open navigation menu");
         document.body.classList.remove("menu-open");
@@ -1926,7 +1925,6 @@
         const isOpen = navLinks.classList.toggle("open");
 
         menuToggle.setAttribute("aria-expanded", String(isOpen));
-        navLinks.setAttribute("aria-hidden", String(!isOpen));
         menuToggle.setAttribute(
           "aria-label",
           isOpen ? "Close navigation menu" : "Open navigation menu"
