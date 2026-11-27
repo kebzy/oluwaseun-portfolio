@@ -6,6 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b1220">
   <meta name="description" content="Portfolio of Oluwaseun Nofiu Abdulkabir, a full-stack web developer and digital solutions professional building websites, web applications, and digital experiences.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Oluwaseun Nofiu Abdulkabir | Full-Stack Web Developer">
+  <meta property="og:description" content="Full-stack web developer and digital solutions professional building websites, web applications, and digital experiences.">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Oluwaseun Nofiu Abdulkabir | Full-Stack Web Developer">
+  <meta name="twitter:description" content="Full-stack web developer and digital solutions professional building websites, web applications, and digital experiences.">
   <title>Oluwaseun Nofiu Abdulkabir | Full-Stack Web Developer</title>
 
   <style>
@@ -38,10 +45,11 @@
       padding: 0;
     }
 
-    html {
-      scroll-behavior: smooth;
-      scroll-padding-top: 90px;
-    }
+    html { scroll-padding-top: 90px; }
+    @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+    .skip-link { position: fixed; top: 12px; left: 12px; z-index: 200; padding: 12px 16px; color: #04150d; background: var(--brand-green); border-radius: 9px; font-weight: 750; transform: translateY(-160%); transition: transform 160ms ease; }
+    .skip-link:focus { transform: translateY(0); }
+    main:focus { outline: none; }
 
     body {
       min-height: 100vh;
@@ -1026,11 +1034,8 @@
     }
 
     /* Reveal animations */
-    .reveal {
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 500ms ease, transform 500ms ease;
-    }
+    .reveal { opacity: 1; transform: none; }
+    .js .reveal { opacity: 0; transform: translateY(16px); transition: opacity 500ms ease, transform 500ms ease; }
 
     .reveal.is-visible {
       opacity: 1;
@@ -1233,6 +1238,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto !important; }
       *,
       *::before,
       *::after {
@@ -1251,6 +1257,7 @@
 </head>
 
 <body>
+  <a class="skip-link" href="#main">Skip to main content</a>
   <header class="site-header">
     <nav class="nav container" aria-label="Main navigation">
       <a class="brand" href="#home" aria-label="Oluwaseun Abdulkabir home">
@@ -1268,6 +1275,7 @@
         aria-label="Open navigation menu"
         aria-expanded="false"
         aria-controls="navLinks"
+        aria-haspopup="true"
       >
         <svg id="menuIcon" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -1294,7 +1302,7 @@
     </nav>
   </header>
 
-  <main>
+  <main id="main" tabindex="-1">
     <!-- HERO -->
     <section class="hero" id="home">
       <div class="container hero-grid">
@@ -1880,7 +1888,7 @@
   </footer>
 
   <button class="back-to-top" id="backToTop" type="button"
-    aria-label="Back to top">
+    aria-label="Back to top" aria-hidden="true" tabindex="-1">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="m18 15-6-6-6 6"/>
@@ -1901,11 +1909,13 @@
         new Date().getFullYear();
 
       // Mobile navigation.
-      function closeMenu() {
+      function closeMenu({ restoreFocus = false } = {}) {
+        const wasOpen = menuToggle.getAttribute("aria-expanded") === "true";
         navLinks.classList.remove("open");
         menuToggle.setAttribute("aria-expanded", "false");
         menuToggle.setAttribute("aria-label", "Open navigation menu");
         document.body.classList.remove("menu-open");
+        if (restoreFocus && wasOpen) menuToggle.focus();
 
         menuIcon.innerHTML =
           '<path d="M4 6h16M4 12h16M4 18h16"/>';
@@ -1932,7 +1942,7 @@
       });
 
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") closeMenu();
+        if (event.key === "Escape") closeMenu({ restoreFocus: true });
       });
 
       window.addEventListener("resize", () => {
@@ -1941,14 +1951,18 @@
 
       // Back-to-top control.
       function updateBackToTop() {
-        backToTop.classList.toggle("visible", window.scrollY > 450);
+        const isVisible = window.scrollY > 450;
+        backToTop.classList.toggle("visible", isVisible);
+        backToTop.setAttribute("aria-hidden", String(!isVisible));
+        backToTop.tabIndex = isVisible ? 0 : -1;
       }
 
       window.addEventListener("scroll", updateBackToTop, { passive: true });
       updateBackToTop();
 
       backToTop.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
       });
 
       // Highlight the active navigation section.
@@ -2007,6 +2021,7 @@
           element.classList.add("is-visible")
         );
       }
+      document.documentElement.classList.add("js");
     })();
   </script>
 </body>
